@@ -40,7 +40,7 @@ export default new Vuex.Store({
 	actions: {
 	  	login({commit}, user){
 	            commit('auth_request')
-	            axios({url: 'http://localhost:9090/api/auth/', 
+	            axios({url: 'https://mpi.healthlink.network/api/auth/', 
 	            	data: user,
 	            	method: 'POST' })
 	            .then(resp => {
@@ -62,7 +62,7 @@ export default new Vuex.Store({
 	  	query({commit}, token){
 	            commit('query_request')
 	            console.log(token)
-	            axios({url: 'http://localhost:9090/api/fhir/Patient/123', 
+	            axios({url: 'https://mpi.healthlink.network/api/fhir/Patient/123', 
 	            	headers: { Authorization: "Bearer " + token },
 	            	method: 'GET' })
 	            .then(resp => {
