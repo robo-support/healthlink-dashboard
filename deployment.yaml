@@ -14,21 +14,6 @@ spec:
         - image: registry.healthlink.network/healthlink-dashboard:latest
           name: healthlink-dashboard
           env:
-          - name: RPC_USER
-            valueFrom:
-              secretKeyRef:
-                name: factom
-                key: user
-          - name: RPC_PASS
-            valueFrom:
-              secretKeyRef:
-                name: factom
-                key: user
-          - name: MONGODB_PASS
-            valueFrom:
-              secretKeyRef:
-                name: mongodb
-                key: mongodb-root-password
           - name: API_URL
             value: 'https://mpi.healthlink.network/'
       imagePullSecrets:
@@ -40,7 +25,7 @@ metadata:
   name: healthlink-dashboard
 spec:
   ports:
-    - name: mpi-dashboard
+    - name: healthlink-dashboard
       port: 8080 # testnet p2p
       protocol: TCP
       targetPort: 8080
@@ -65,7 +50,7 @@ spec:
       paths:
       - backend:
           serviceName: healthlink-dashboard
-          servicePort: 9090
+          servicePort: 8080
         path: /
   tls:
   - hosts:
