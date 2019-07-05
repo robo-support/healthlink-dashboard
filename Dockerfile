@@ -8,7 +8,7 @@ COPY . .
 FROM develop-stage as build-stage
 RUN yarn build
 # production stage
-FROM nginx:1.15.7-alpine as production-stage
+FROM nginx:1.15.7-alpine
 COPY --from=build-stage /app/dist /usr/share/nginx/html
 EXPOSE 80
 CMD ["nginx", "-c", "nginx.conf", "-g", "daemon off;"]
