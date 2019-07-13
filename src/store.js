@@ -34,6 +34,7 @@ export default new Vuex.Store({
 	  	},
 	  	logout(state){
 	    	state.status = ''
+	    	state.resources = ''
 	    	state.token = ''
 	  	},
 	},
@@ -50,16 +51,12 @@ export default new Vuex.Store({
 	                // Add the following line:
 	                //axios.defaults.headers.common['Authorization'] = this.$store.state.token
 	                commit('auth_success', token)
-	                console.log('token is now '+ token)
 	                Vue.prototype.$http.defaults.headers.common['Authorization'] = token
 					Vue.prototype.$http.defaults.headers.common['Access-Control-Allow-Origin'] = 'healthlink.network*'
-
-	                resolve(resp)  
 	            })
 	            .catch(err => {
+	            	console.log('Error during login...' + err)
 	                commit('auth_error')
-	                localStorage.removeItem('token')
-	                //reject(err)
 	            })
 	    },
 	  	query({commit}, token){
@@ -73,12 +70,12 @@ export default new Vuex.Store({
 	                console.log(resp.data)
 	                localStorage.setItem('resources', resources)
 	                commit('query_success', resources)
-	                resolve(resp)
 	            })
 	            .catch(err => {
+	            	console.log('Error during query...'  + err)
+
 	                commit('auth_error')
 	                localStorage.removeItem('token')
-	                //reject(err)
 	            })
 	    },
 	 	logout({commit}){
