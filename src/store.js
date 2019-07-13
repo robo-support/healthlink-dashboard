@@ -6,7 +6,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
 	state: {
-  		status: '',
+  		status: 'pending',
   		token: localStorage.getItem('token') || '',
   		resources : []
 	},
@@ -29,7 +29,7 @@ export default new Vuex.Store({
 	  		state.resources = resources
 	  	},
 	  	query_error(state){
-	  		state.status = 'success'
+	  		state.status = 'error'
 	  		state.resources = []
 	  	},
 	  	logout(state){
@@ -51,7 +51,7 @@ export default new Vuex.Store({
 	                //axios.defaults.headers.common['Authorization'] = this.$store.state.token
 	                commit('auth_success', token)
 	                console.log('token is now '+ token)
-	                resolve(resp)
+	                resolve(resp)  
 	            })
 	            .catch(err => {
 	                commit('auth_error')
@@ -82,6 +82,7 @@ export default new Vuex.Store({
 		    return new Promise((resolve, reject) => {
 		      	commit('logout')
 		      	localStorage.removeItem('token')
+		      	localStorage.removeItem('resources')
 		      	delete axios.defaults.headers.common['Authorization']
 		      	resolve()
 		    })
@@ -90,6 +91,10 @@ export default new Vuex.Store({
 	getters : {
 	  isLoggedIn: state => !!state.token,
 	  authStatus: state => state.status,
-	  getToken: state => state.token
+	  getToken: state => state.token,
+	  selectedResource(state){
+    	console.log('getting selected resource')
+    	return state.resources
+  	  }
 	}
 })

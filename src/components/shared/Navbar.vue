@@ -55,10 +55,9 @@
 		   	},
 		   	sync: function () {
 		   		this.$store.dispatch('query', this.$store.state.token)
-		   		.then(() => console.log('syncing...'))
+		   		.then(() => this.$router.push('/dashboard'))
 		   		.catch(err => console.log(err))
 		   	}
-
 		}
 	}
 </script>

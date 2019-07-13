@@ -26,9 +26,9 @@ metadata:
 spec:
   ports:
     - name: healthlink-dashboard
-      port: 8080 # testnet p2p
+      port: 80 # testnet p2p
       protocol: TCP
-      targetPort: 8080
+      targetPort: 80
 
   selector:
     app: healthlink-dashboard
@@ -50,7 +50,7 @@ spec:
       paths:
       - backend:
           serviceName: healthlink-dashboard
-          servicePort: 8080
+          servicePort: 80
         path: /
   tls:
   - hosts:
