@@ -6,7 +6,10 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
 	state: {
-  		status: 'pending',
+  		status: 'loggedIn',
+  		patientId: '',
+  		providerId: '',
+  		keystoreId: '',
   		token: localStorage.getItem('token') || '',
   		resources : []
 	},
@@ -14,9 +17,10 @@ export default new Vuex.Store({
 		auth_request(state){
 	    	state.status = 'loading'
 	  	},
-	  	auth_success(state, token){
+	  	auth_success(state, token, user){
 		    state.status = 'success'
 		    state.token = token
+		    state.user = user
 	  	},
 	  	auth_error(state){
 	    	state.status = 'error'
@@ -33,8 +37,8 @@ export default new Vuex.Store({
 	  		state.resources = []
 	  	},
 	  	logout(state){
-	    	state.status = ''
-	    	state.resources = ''
+	    	state.status = 'loggedOut'
+	    	state.resources = []
 	    	state.token = ''
 	  	},
 	},
@@ -46,11 +50,13 @@ export default new Vuex.Store({
 	            	method: 'POST' })
 	            .then(resp => {
 	                const token = resp.data
-	                console.log(resp.data)
+	                console.log(user)
 	                localStorage.setItem('token', token)
+	                localStorage.setItem('user', user)
+
 	                // Add the following line:
 	                //axios.defaults.headers.common['Authorization'] = this.$store.state.token
-	                commit('auth_success', token)
+	                commit('auth_success', token, user)
 	                Vue.prototype.$http.defaults.headers.common['Authorization'] = token
 					Vue.prototype.$http.defaults.headers.common['Access-Control-Allow-Origin'] = 'healthlink.network*'
 	            })

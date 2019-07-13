@@ -14,8 +14,11 @@
 		}, 
 		components: {
 			Navbar, 
-			Result
+			Result,
 		}, 
+		props: {
+			resourceType: 'Patient'
+		},
 		Create: function () {
 	   		//this.$store.dispatch('query', this.$store.state.token)
 	   		//.then(() => console.log('syncing...'))

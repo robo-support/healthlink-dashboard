@@ -30,10 +30,11 @@
 <script>
 	export default {
 		data(){
+			// this is the 'user' prop
 			return {
-				providerId : "",
-            	keystoreId : "",
-            	patientId : ""
+				providerId : '',
+            	keystoreId : '',
+            	patientId : ''
             }
 		},
 		methods: {
