@@ -26,11 +26,11 @@ const routes = [
 	}
 ]
 
-// const token = localStorage.getItem('token')
-// if(token) {
-// 	Vue.prototype.$http.defaults.headers.common['Authorization'] = token
-// 	Vue.prototype.$http.defaults.headers.common['Access-Control-Allow-Origin'] = '*'
-// }
+const token = localStorage.getItem('token')
+if(token) {
+	Vue.prototype.$http.defaults.headers.common['Authorization'] = token
+	Vue.prototype.$http.defaults.headers.common['Access-Control-Allow-Origin'] = 'healthlink.network*'
+}
 
 const router = new VueRouter({ 
 	routes, 

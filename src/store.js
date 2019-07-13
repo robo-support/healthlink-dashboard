@@ -51,6 +51,9 @@ export default new Vuex.Store({
 	                //axios.defaults.headers.common['Authorization'] = this.$store.state.token
 	                commit('auth_success', token)
 	                console.log('token is now '+ token)
+	                Vue.prototype.$http.defaults.headers.common['Authorization'] = token
+					Vue.prototype.$http.defaults.headers.common['Access-Control-Allow-Origin'] = 'healthlink.network*'
+
 	                resolve(resp)  
 	            })
 	            .catch(err => {
