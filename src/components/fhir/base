@@ -1,0 +1,118 @@
+
+<template>
+	<div class="card-header">
+
+		{{resource.body.name[0].given.toString()+"\t "+resource.body.name[0].family.toString()}}
+		<span class="badge badge-secondary pull-right">{{resource.body.gender}}</span>
+	</div>
+	<div class="card-body">
+		<h6>Organization</h6>
+		<p class="card-text">
+			Walt Disney Corporation
+		</p>
+		<h6>Managing Organzation</h6>
+		<p class="card-text">
+			ACME Healthcare, Inc
+		</p>
+		<a href="#" v-on:click="showComponent()" class="btn btn-primary">View more </a>
+	</div>
+</template>
+
+<script>
+
+export default {
+  name: 'Patient',
+
+
+}
+</script>
+
+<style>
+
+</style>
+
+
+
+
+
+
+
+          <div class="card-header">
+
+            {{resource.body.name[0].given.toString()+"\t "+resource.body.name[0].family.toString()}}
+            <span class="badge badge-secondary pull-right">{{resource.body.gender}}</span>
+          </div>
+          <div class="card-body">
+            <h6>Organization</h6>
+            <p class="card-text">
+              Walt Disney Corporation
+            </p>
+            <h6>Managing Organzation</h6>
+            <p class="card-text">
+              ACME Healthcare, Inc
+            </p>
+            <a href="#" v-on:click="showComponent()" class="btn btn-primary">View more </a>
+          </div>
+    Patient:
+      type: object
+      properties:
+        resourceType: 
+          $ref: '#/components/schemas/resourceType'
+        identifier:
+          type: array
+          items:
+            $ref: '#/components/schemas/Identifier'
+        active:
+          type: boolean
+        name:
+          type: array
+          items:
+            $ref: '#/components/schemas/HumanName'
+        telecom:
+          type: array
+          items:
+            $ref: '#/components/schemas/ContactPoint'
+        gender:
+          $ref: '#/components/schemas/code'
+        birthDate:
+          $ref: '#/components/schemas/date'
+        deceasedBoolean:
+          type: boolean
+        deceasedDateTime:
+          $ref: '#/components/schemas/dateTime'
+        address:
+          type: array
+          items:
+            $ref: '#/components/schemas/Address'
+        martialStatus:
+          $ref: '#/components/schemas/CodeableConcept'
+        multipleBirthBoolean:
+          type: boolean
+        multipleBirthInteger:
+          type: number
+          format: integer
+        photo:
+          type: array
+          items:
+            $ref: '#/components/schemas/Attachment'
+        contact:
+          type: array
+          items:
+            $ref: '#/components/schemas/contact'
+        communication:
+          type: array
+          items:
+            $ref: '#/components/schemas/communication'
+        generalPractitioner:
+          type: array
+          items:
+            $ref: '#/components/schemas/Reference'
+        managingOrganization:
+          $ref: '#/components/schemas/Reference'
+        link:
+          type: array
+          items:
+            $ref: '#/components/schemas/code'
+      externalDocs: 
+        description: Learn more about patients at
+        url: 'http://hl7.org/fhir/patient.html'

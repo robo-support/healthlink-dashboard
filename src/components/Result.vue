@@ -43,7 +43,6 @@
 </template>
 <script>
 	import SyncLoader from "./shared/SyncLoader.vue";
-	import Base from "./fhir/Patient.vue"
 	import { mapState } from 'vuex';
 
 	resourceTypeEnum: [{type: String, enum: ['Patient', 'Condition','CapabilityStatement','StructureDefinition','OperationDefinition','CodeSystem','ValueSet','Consent','Practitioner','Person','Group','PractitionerRole','Substance','Device','DeviceMetric','Observation','Procedure','Bundle','DiagonsticReport','AllergyIntolerance','FamilyMemberHistory','OperationOutcome','Encounter','Location','GeneralError']}];
