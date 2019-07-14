@@ -1,0 +1,87 @@
+show failure, 
+
+What happens when a record is not complete.
+
+Fake data not in blockchain
+
+Don't get all the records from the blockchain 
+
+Disaster recovery -- hack of NHS, brought down a lot of the .
+
+If healthlink servers are compromised. Tie into factom directly to operate under some kind of cyber attack.
+
+
+
+Marina:
+Consent form -- sharing record with different providers.
+
+How do we process different requests. A general doctor for transferring different records based on type and dates.
+Minimize number of keychange and record rencryptions if we need to change the keys..
+THis is hard because we do not store the volume of the records.
+
+
+For dates its kind of reasonable, but for 
+
+Do we want to distinguish between different kinds of records
+
+If we have a provier and we know what kind of provider it is and what kind of datatypes are meaningful. This is 
+
+
+
+observe changes and the timing of the changes. Over time the would be able to see metadata.
+
+onetime, we would see total records and keys.
+
+
+priority pass # call tuesday.
+8662634292
+
+					<---<fhir-base :resourceType="resource.body.resourceType" :attestation="resource.attestation" :fhirResource="resource.body"></fhir-base>
+
+
+<template>
+	<div class="container">
+
+		<div class="row justify-content-center">
+			<h1 v-if="status === 'success'">Success {{ complex.deep }}</h1>
+			<h1 v-else-if="status === 'error'">Error</h1>
+			<h1 v-else>Loading <app-sync></app-sync> </h1>
+			<div class="col-lg-6" v-if="resources.length <= 0">
+				<div class="alert alert-info" role="alert">
+					<h4 class="alert-heading">No Patient Information</h4>
+					<p>Please sync with Healthlink</p>
+					<hr>
+					<p class="mb-0">
+						<span class="btn btn-sm btn-warning">
+							Sync
+						</span>
+					</p>
+				</div>
+			</div>
+		</div>
+		<div class="row justify-content-center " v-if="resources.length > 0">
+			<div class="col-lg-6">
+				<h3>Patient Information</h3>
+				<div class="card" v-if="resources.length > 0" v-for="(patient, index) in resources" :key="index">
+					<div class="card-header">
+
+						{{patient.body.name[0].given.toString()+"\t "+patient.body.name[0].family.toString()}}
+						<span class="badge badge-secondary pull-right">{{patient.body.gender}}</span>
+					</div>
+					<div class="card-body">
+						<h6>Organization</h6>
+						<p class="card-text">
+							Walt Disney Corporation
+						</p>
+						<h6>Managing Organzation</h6>
+						<p class="card-text">
+							ACME Healthcare, Inc
+						</p>
+						<a href="#" v-on:click="showComponent()" class="btn btn-primary">View more </a>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+</template>

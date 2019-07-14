@@ -53,7 +53,6 @@ export default {
 	computed: mapState(['status', 'resources']),
 	components: {
 		'app-sync': SyncLoader,
-		'fhir-base': Base
 	},
 	props: {
 	    resourceType: {
