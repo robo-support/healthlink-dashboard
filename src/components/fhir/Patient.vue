@@ -1,41 +1,19 @@
-<fhirtree :fhirtreedata="{{ $fhirJSON }}"></fhirtree>
-
 <template>
 	<div class="card-header">
-
-		{{fhir-resource.name[0].given.toString()+"\t "+fhir-resource.name[0].family.toString()}}
-		<span class="badge badge-secondary pull-right">{{fhir-resource.gender}}</span>
+		{{resourceType}}
 	</div>
 	<div class="card-body">
-		<h6>Organization</h6>
-		<p class="card-text">
-			Walt Disney Corporation
-		</p>
-		<h6>Managing Organzation</h6>
-		<p class="card-text">
-			ACME Healthcare, Inc
-		</p>
-		<ul class="menu">
-			<li class="fhir-item" v-for="(key, value) in fhir-resource">
-				@{{key}}
-					<fhirtree :fhirtreedata="value"></fhirtree>
-			</li>
-		</ul>
-		<a href="#" v-on:click="showComponent()" class="btn btn-primary">View more </a>
+		Body
 	</div>
 </template>
 
 <script>
-
+import Base from './Base.vue';
 export default {
   name: 'Patient',
+  extends: Base,
   data: {
   	keys: [],
-  },
-  props: {
-  	resourceType: String,
-  	attestation: String,
-  	fhirResource: Object
   },
   computed: {
   	fhirResourceKeys: function () {
@@ -51,7 +29,24 @@ export default {
 	    
 	    return keys;
   	}
-  }
+  },
+	props: {
+	resourceType: {
+	  type: String,
+	  validator: value => {
+	    // only acept if its in the supproted enum
+	    if (value in this.resourceTypeEnum) {
+	      return 1;
+	    }
+	    return 0;
+	  }
+	},
+	},
+	data () { 
+	return { 
+	  resourceTypeEnum: [{type: String, enum: ['Patient', 'Condition','CapabilityStatement','StructureDefinition','OperationDefinition','CodeSystem','ValueSet','Consent','Practitioner','Person','Group','PractitionerRole','Substance','Device','DeviceMetric','Observation','Procedure','Bundle','DiagonsticReport','AllergyIntolerance','FamilyMemberHistory','OperationOutcome','Encounter','Location','GeneralError']}],
+	}
+	},
 
 
 }
