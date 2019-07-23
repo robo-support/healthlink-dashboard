@@ -1,9 +1,11 @@
 import Vue from "vue";
+import axios from 'axios'
+import BootstrapVue from 'bootstrap-vue'
 import App from "./App.vue";
 import VueRouter from "vue-router"; 
 import store from './store.js';
-import axios from 'axios'
 import "bootstrap/dist/css/bootstrap.min.css";
+import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 Vue.prototype.$http = axios;
 
@@ -11,6 +13,7 @@ import Login from "./components/views/auth/Login.vue";
 import Dashboard from "./components/views/Dashboard.vue";
 
 Vue.use(VueRouter);
+Vue.use(BootstrapVue);
 
 
 const routes = [ 
@@ -26,11 +29,7 @@ const routes = [
 	}
 ]
 
-const token = localStorage.getItem('token')
-if(token) {
-	Vue.prototype.$http.defaults.headers.common['Authorization'] = token
-	Vue.prototype.$http.defaults.headers.common['Access-Control-Allow-Origin'] = 'healthlink.network*'
-}
+
 
 const router = new VueRouter({ 
 	routes, 
