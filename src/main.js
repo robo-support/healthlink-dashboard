@@ -11,6 +11,8 @@ Vue.prototype.$http = axios;
 
 import Login from "./components/views/auth/Login.vue";
 import Dashboard from "./components/views/Dashboard.vue";
+import Transfer from "./components/views/Transfer.vue";
+import Create from "./components/views/Create.vue"
 
 Vue.use(VueRouter);
 Vue.use(BootstrapVue);
@@ -26,6 +28,16 @@ const routes = [
 		name: "dashboard", 
 		path: "/dashboard", 
 		component: Dashboard
+	},
+	{
+		name: "create", 
+		path: "/create", 
+		component: Create
+	},
+	{
+		name: "transfer", 
+		path: "/transfer", 
+		component: Transfer
 	}
 ]
 

@@ -1,18 +1,18 @@
-<fhirtree :fhirtreedata="{{ $fhirJSON }}"></fhirtree>
-
 <template>
 
 	<div class="container">
 		<div class="card" v-for="(resource, index) in resources" :key="index">
 			<div>
-				<b-card border-variant="success"
+				<b-card 
+				border-variant="success"
         		header-bg-variant="success"
         		header-text-variant="white"
         		header-tag="header"
 				footer-tag="footer"
 				body-tag="body"
         		:title="resource.body.resourceType"
-        		:sub-title="resource.body.id">
+        		:sub-title="resource.body.id"
+        		class="mt-1">
 
         		<!-- header slot -->
 				<h4 slot="header" class="mb-0">
@@ -23,9 +23,28 @@
 
 				<!-- card body -->
 				<b-card-body>
-					
-					<img v-if="'photo' in resource.body" v-bind:src="'data:image/jpeg;base64,'+resource.body.photo.data" /> 
-					<b-button v-b-toggle="'collapse-'+index" variant="primary">View More</b-button>
+					<b-row>
+					<b-col cols="8" v-if="'active' in resource.body" >
+						Status:
+						<span>
+							<b-badge v-if="resource.body.active==true" pill variant="success">Active</b-badge>
+							<b-badge v-if="resource.body.active==false" pill variant="danger">Inactive</b-badge>
+							</span>
+
+					</b-col>
+					<b-col v-if="'photo' in resource.body"  >
+						<img v-bind:src="'data:image/jpeg;base64,'+img" />
+
+					</b-col>
+					</b-row>
+
+					<b-row class="mt-2">
+					<b-col>
+						<b-button v-b-toggle="'collapse-'+index" variant="primary">View More</b-button>
+					</b-col>
+
+					</b-row>
+
 					<b-collapse :id="'collapse-'+index"
 					class="mt-2">
 						<b-card>
@@ -46,7 +65,45 @@
 				</b-card-body>
 
 				<!-- footer slot -->
-      			<em slot="footer">Footer Slot</em>
+      			<em slot="footer">
+      			<b-row>
+      				<b-col>
+					<b-button v-b-toggle="'input-collapse-'+index" variant="warning">Edit</b-button>
+					</b-col>
+					<b-col>
+					<b-button v-b-toggle="'transfer-collapse-'+index" variant="info" class="float-right">Transfer</b-button>
+					</b-col>
+					</b-row>
+					<b-collapse :id="'input-collapse-'+index"
+					class="mt-2">
+						<b-card>
+						  <b-card-body>
+						  <p class="card-text">
+							<div>
+
+							  </div>   
+						  </p>
+						  </b-card-body>
+
+						</b-card>
+					</b-collapse>
+					<b-collapse :id="'transfer-collapse-'+index"
+					class="mt-2">
+						<b-card>
+						  <b-card-body>
+						  <p class="card-text">
+							<div>
+
+							  </div>   
+						  </p>
+						  </b-card-body>
+
+						</b-card>
+					</b-collapse>
+
+   				
+
+      			</em>
 
 
 				</b-card>
@@ -100,6 +157,7 @@ export default {
     },
 	data () {
 		return {
+		img: "R0lGODlhEwARAPcAAAAAAAAA/+9aAO+1AP/WAP/eAP/eCP/eEP/eGP/nAP/nCP/nEP/nIf/nKf/nUv/nWv/vAP/vCP/vEP/vGP/vIf/vKf/vMf/vOf/vWv/vY// va//vjP/3c//3lP/3nP//tf//vf//////////////////////////////////////////////////////////////////////////////////////////////// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// /////////////////////////////////////////////////////////yH5BAEAAAEALAAAAAATABEAAAi+AAMIDDCgYMGBCBMSvMCQ4QCFCQcwDBGCA4cLDyE GECDxAoAQHjxwyKhQAMeGIUOSJJjRpIAGDS5wCDly4AALFlYOgHlBwwOSNydM0AmzwYGjBi8IHWoTgQYORg8QIGDAwAKhESI8HIDgwQaRDI1WXXAhK9MBBzZ8/X DxQoUFZC9IiCBh6wEHGz6IbNuwQoSpWxEgyLCXL8O/gAnylNlW6AUEBRIL7Og3KwQIiCXb9HsZQoIEUzUjNEiaNMKAAAA7"
 		};
 	},
 	methods: {

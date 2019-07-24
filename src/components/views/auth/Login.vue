@@ -22,7 +22,9 @@
 				Sign in
 			</button>
 			<p class="mt-5 mb-3 text-muted text-center">
-				&copy; Health link 2019
+				&copy; HealthLink 2019
+				
+				&copy; Consensus Networks 2019
 			</p>
 		</form>
 	</div>

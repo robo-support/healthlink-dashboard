@@ -17,25 +17,13 @@
 			Result,
 		}, 
 		props: {
-			resourceType: 'Patient'
 		},
 		Create: function () {
-	   		//this.$store.dispatch('query', this.$store.state.token)
-	   		//.then(() => console.log('syncing...'))
-	   		//.catch(err => console.log(err))
 		},
 		methods: {
-			//query () {
-		   	//	this.$store.dispatch('query')
-		   	//	.then(() => console.log('querying healthlink...'))
-		   	//	.catch(err => console.log(err))
-			//}
 		},
 		mounted () { 
 			// this.authInit();	
 		}
 	}
 </script>
-<style scoped>
-	
-</style>
