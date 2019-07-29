@@ -36,6 +36,15 @@ export default new Vuex.Store({
 	  		state.status = 'error'
 	  		state.resources = []
 	  	},
+	  	create_request(state){
+	  		state.status = 'loading'
+	  	},
+	  	create_success(state){
+	  		state.status = 'success'
+	  	},
+	  	create_error(state){
+	  		state.status = 'error'
+	  	},
 	  	logout(state){
 	    	state.status = 'loggedOut'
 	    	state.resources = []
@@ -79,9 +88,25 @@ export default new Vuex.Store({
 	            })
 	            .catch(err => {
 	            	console.log('Error during query...'  + err)
-
+	            	console.log(err)
 	                commit('auth_error')
-	                localStorage.removeItem('token')
+	            })
+	    },
+	  	create({commit}, token){
+	            commit('create_request')
+	            axios({url: 'https://mpi.healthlink.network/api/fhir/Patient', 
+	            	   headers: { Authorization: "Bearer " + token },
+	            	   method: 'POST',
+	            	   data: commit})
+	            .then(resp => {
+	                console.log(resp.data)
+	                console.log(resp.status)
+	                commit('create_success', resources)
+	            })
+	            .catch(err => {
+	            	console.log('Error during create...'  + err)
+	            	console.log(err)
+	                commit('create_error')
 	            })
 	    },
 	 	logout({commit}){
