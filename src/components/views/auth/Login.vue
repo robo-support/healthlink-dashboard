@@ -19,7 +19,7 @@
 			<label for="KeyId" class="sr-only">
 				Key ID
 			</label>
-			 <input required v-model="patientId" type="text" class="form-control"  placeholder="Key Identifier (for verification of permissions)"/>
+			 <input required v-model="keyId" type="text" class="form-control"  placeholder="Key Identifier (for verification of permissions)"/>
 		
 
 			<button class="btn btn-lg btn-info btn-block mt-3" type="submit" v-on:click="login()">
