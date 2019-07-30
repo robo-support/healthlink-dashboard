@@ -16,7 +16,11 @@
 				Patient ID
 			</label>
 			 <input required v-model="patientId" type="text" class="form-control"  placeholder="Patient Identifier"/>
-	
+			<label for="KeyId" class="sr-only">
+				Key ID
+			</label>
+			 <input required v-model="patientId" type="text" class="form-control"  placeholder="Key Identifier (for verification of permissions)"/>
+		
 
 			<button class="btn btn-lg btn-info btn-block mt-3" type="submit" v-on:click="login()">
 				Sign in
@@ -36,7 +40,8 @@
 			return {
 				providerId : '',
             	keystoreId : '',
-            	patientId : ''
+            	patientId : '',
+            	keyId : ''
             }
 		},
 		methods: {
@@ -44,7 +49,8 @@
 		   		let providerId = this.providerId
 		   		let keystoreId = this.keystoreId 
 		   		let patientId = this.patientId
-		   		this.$store.dispatch('login', { providerId, keystoreId, patientId })
+		   		let keyId = this.keyId
+		   		this.$store.dispatch('login', { providerId, keystoreId, patientId, keyId })
 		   		.then(() => this.$router.push('/dashboard'))
 		   		.catch(err => console.log(err))
 		   	}

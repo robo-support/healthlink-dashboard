@@ -10,6 +10,7 @@ export default new Vuex.Store({
   		patientId: '',
   		providerId: '',
   		keystoreId: '',
+  		keyId: '',
   		token: localStorage.getItem('token') || '',
   		resources : []
 	},
@@ -77,7 +78,7 @@ export default new Vuex.Store({
 	  	query({commit}, token){
 	            commit('query_request')
 	            console.log(token)
-	            axios({url: 'https://mpi.healthlink.network/api/fhir/Patient/123', 
+	            axios({url: 'https://mpi.healthlink.network/api/fhir', 
 	            	headers: { Authorization: "Bearer " + token },
 	            	method: 'GET' })
 	            .then(resp => {
@@ -94,7 +95,7 @@ export default new Vuex.Store({
 	    },
 	  	create({commit}, token){
 	            commit('create_request')
-	            axios({url: 'https://mpi.healthlink.network/api/fhir/Patient', 
+	            axios({url: 'https://mpi.healthlink.network/api/fhir', 
 	            	   headers: { Authorization: "Bearer " + token },
 	            	   method: 'POST',
 	            	   data: commit})
