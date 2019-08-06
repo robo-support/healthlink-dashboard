@@ -67,8 +67,9 @@ export default new Vuex.Store({
 	                // Add the following line:
 	                //axios.defaults.headers.common['Authorization'] = this.$store.state.token
 	                commit('auth_success', token, user)
-	                Vue.prototype.$http.defaults.headers.common['Authorization'] = token
-					Vue.prototype.$http.defaults.headers.common['Access-Control-Allow-Origin'] = 'healthlink.network*'
+	                this.$http.defaults.headers.common['Authorization'] = 'Bearer ' + token
+					this.$http.defaults.headers.common['Access-Control-Allow-Origin'] = '*'
+				    this.$http.defaults.headers.common['Content-Type'] = 'Application/json'
 	            })
 	            .catch(err => {
 	            	console.log('Error during login...' + err)
@@ -93,19 +94,23 @@ export default new Vuex.Store({
 	                commit('auth_error')
 	            })
 	    },
-	  	create({commit}, token){
+	  	create({commit}, token, formdata){
 	            commit('create_request')
-	            axios({url: 'https://mpi.healthlink.network/api/fhir', 
-	            	   headers: { Authorization: "Bearer " + token },
-	            	   method: 'POST',
-	            	   data: commit})
+	            console.log('token: '  + token)
+	            const options = {
+				    headers: { Authorization: `Bearer ${token}`,
+				    		   'Content-Type': 'Application/json',
+				    		   'Access-Control-Allow-Origin': '*' }
+				};
+				//const payload = JSON.stringify(formdata);
+				console.log(payload)
+	            axios.post('https://mpi.healthlink.network/api/fhir', payload, options)
 	            .then(resp => {
 	                console.log(resp.data)
 	                console.log(resp.status)
 	                commit('create_success', resources)
 	            })
 	            .catch(err => {
-	            	console.log('Error during create...'  + err)
 	            	console.log(err)
 	                commit('create_error')
 	            })

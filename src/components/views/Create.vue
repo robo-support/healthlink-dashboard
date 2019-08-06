@@ -3,7 +3,7 @@
 		<Navbar/>
 
   <div class="container">
-    <b-form @submit="onSubmit">
+    <b-form>
 
       <!-- Wrapperd -->
       <b-form-group
@@ -19,7 +19,7 @@
           id="input-1"
           v-model="form.resourceType"
           :options="resourceTypeEnum"
-          required
+          
         ></b-form-select>
       </b-form-group>
 
@@ -31,7 +31,7 @@
           id="input-2"
           v-model="form.identifier.value"
           type="string"
-          required
+          
           placeholder="Identifier">
         </b-form-input>
 
@@ -57,7 +57,7 @@
 		          id="'input-given-'+index"
 		          v-model="name.given"
 		          type="string"
-		          required
+		          
 		          placeholder="Given">
 		        </b-form-input>
 
@@ -65,7 +65,7 @@
 		          id="'input-family'+index"
 		          v-model="name.family"
 		          type="string"
-		          required
+		          
 		          placeholder="Family">
 		        </b-form-input>
 
@@ -118,7 +118,7 @@
 		          id="'input-value-'+index"
 		          v-model="telecom.value"
 		          type="string"
-		          required
+		          
 		          placeholder="Phone/Email/Etc.">
 		        </b-form-input>
 
@@ -160,7 +160,7 @@
 		          id="'input-addr-line'+index"
 		          v-model="addr.value"
 		          type="string"
-		          required
+		          
 		          placeholder="Street name, number, direction & P.O. Box etc.">
 		        </b-form-input>
 
@@ -168,7 +168,7 @@
 		          id="'input-addr-city'+index"
 		          v-model="addr.city"
 		          type="string"
-		          required
+		          
 		          placeholder="City/Town">
 		        </b-form-input>
 
@@ -184,7 +184,7 @@
 		          id="'input-addr-state'+index"
 		          v-model="addr.state"
 		          type="string"
-		          required
+		          
 		          placeholder="State">
 		        </b-form-input>	
 
@@ -192,7 +192,7 @@
 		          id="'input-addr-postal'+index"
 		          v-model="addr.postalCode"
 		          type="string"
-		          required
+		          
 		          placeholder="Postal Code">
 		        </b-form-input>	
 
@@ -201,7 +201,7 @@
 		          id="'input-addr-country'+index"
 		          v-model="addr.country"
 		          type="string"
-		          required
+		          
 		          placeholder="Country">
 		        </b-form-input>	
 
@@ -282,7 +282,7 @@
       <!-- Form Wrapper Group End -->
       </b-form-group>
 
-      <b-button type="submit" variant="primary">Submit</b-button>
+      <b-button @click="create" variant="primary">Submit</b-button>
     </b-form>
     <b-card class="mt-3" header="Form Data Result">
       <pre class="m-0">{{ form }}</pre>
@@ -333,10 +333,20 @@
       }
     },
     methods: {
-      onSubmit(evt) {
-   		this.$store.dispatch('create', this.form)
+      create: function() {
+        //const form = JSON.stringify(this.form)
+
+        const options = {
+		    headers: { Authorization: `Bearer ${this.$store.state.token}`,
+		    		   'Content-Type': 'Application/json',
+		    		   'Access-Control-Allow-Origin': '*' }
+		};
+        this.$http.post('https://mpi.healthlink.network/api/fhir', this.form, options)
    		.then(() => this.$router.push('/dashboard'))
    		.catch(err => console.log(err))
+        //console.log('payload type: ' + typeof(form) + ' \n' + form)
+   		//this.$store.dispatch('create', this.$store.state.token, form)
+
    	  },
 
       addName: function () {
@@ -352,7 +362,7 @@
         this.form.telecom.pop()
       },
       addAddress: function () {
-      	this.form.address.push({'use': '', 'type': '', 'text': '', 'line': '', 'city': '', 'district': '', 'state': '', 'postalCode': '', 'country': '', 'period': ''})
+      	this.form.address.push({'use': '', 'usetype': '', 'text': '', 'line': '', 'city': '', 'district': '', 'state': '', 'postalCode': '', 'country': '', 'period': ''})
       },
       rmAddress: function () {
       	this.form.address.pop()
