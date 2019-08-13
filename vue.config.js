@@ -3,10 +3,8 @@ module.exports = {
 	// options 
 	devServer: {
 		disableHostCheck: true,
-		publicPath: '/'
-		//proxy: 'http://localhost:9090/',
-        // proxy: 'https://mpi.healthlink.network/',
-
+		publicPath: '/',
+		// proxy: process.env.ROOT_API,
+        proxy: 'http://localhost:8088/',
     },
-	//basePath: '/',
 }

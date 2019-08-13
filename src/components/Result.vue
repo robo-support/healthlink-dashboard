@@ -166,6 +166,13 @@ export default {
 	   		.then(() => this.$router.push('/dashboard'))
 	   		.catch(err => console.log(err))
 	   	},
+	   	link: function () {
+	   		console.log('linking complete... do something.....')
+	   		//this.$store.dispatch('healthlink')
+	   		//.then(() => //this.$router.push('/dashboard'))
+	   		//.catch(err => console.log(err))
+
+	   	},
 	   	decodeImage: function(source) {
 	   		var image = new Image();
 	   		image.src = source;
@@ -179,6 +186,13 @@ export default {
 			if (newValue === 'error') {
 				console.log("Error during state change..")
 			}
+		}
+	},
+	mounted: {
+		healthlink: function () {
+			this.$store.dispatch('healthlink')
+			.then(() => this.link())
+			.catch(err => console.log(err))
 		}
 	}
 };

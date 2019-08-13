@@ -283,6 +283,7 @@
       </b-form-group>
 
       <b-button @click="create" variant="primary">Submit</b-button>
+      
     </b-form>
     <b-card class="mt-3" header="Form Data Result">
       <pre class="m-0">{{ form }}</pre>
@@ -293,11 +294,13 @@
 
 <script>
   import Navbar from "../shared/Navbar.vue";
+  import Fhir from "@/services/Fhir"
 
   export default {
   	components: {
   		Navbar,
   	},
+  	//computed: mapState(['form']),
     data() {
       return {
         form: {
@@ -334,19 +337,24 @@
     },
     methods: {
       create: function() {
-        //const form = JSON.stringify(this.form)
 
-        const options = {
-		    headers: { Authorization: `Bearer ${this.$store.state.token}`,
-		    		   'Content-Type': 'Application/json',
-		    		   'Access-Control-Allow-Origin': '*' }
-		};
-        this.$http.post('https://mpi.healthlink.network/api/fhir', this.form, options)
-   		.then(() => this.$router.push('/dashboard'))
-   		.catch(err => console.log(err))
-        //console.log('payload type: ' + typeof(form) + ' \n' + form)
-   		//this.$store.dispatch('create', this.$store.state.token, form)
-
+        Fhir.create(this.$store.state.token, this.form)
+        .then(resp => {
+            console.log(resp.data)
+            console.log(resp.status)
+            this.$router.push('/dashboard')
+        })
+        .catch(err => {
+        	console.log(err)
+            commit('create_error')
+        })
+        //const formData = _.cloneDeep(this.$store.state.form);
+        //this.$store.commit('updateForm', this.table)
+        //console.log(formData)
+    	//this.$store.dispatch('create', 
+    	//this.$store.state.token, formData)
+   		//.then(() => this.$router.push('/dashboard'))
+   		//.catch(err => console.log(err))
    	  },
 
       addName: function () {

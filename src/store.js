@@ -1,6 +1,9 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios'
+import Auth from '@/services/Auth'
+import Fhir from '@/services/Fhir'
+import Chain from '@/services/Chain'
 
 Vue.use(Vuex)
 
@@ -12,7 +15,9 @@ export default new Vuex.Store({
   		keystoreId: '',
   		keyId: '',
   		token: localStorage.getItem('token') || '',
-  		resources : []
+  		resources : [],
+  		links: [],
+  		form: {}
 	},
 	mutations: {
 		auth_request(state){
@@ -37,6 +42,22 @@ export default new Vuex.Store({
 	  		state.status = 'error'
 	  		state.resources = []
 	  	},
+	    healthlink_request(state){
+	  		state.status = 'loading'
+	  	},
+	  	healthlink_update(state, link) {
+	  		state.links.push(link)
+	  	},
+	  	healthlink_success(state){
+	  		state.status = 'success'
+	  	},
+	  	healthlink_error(state){
+	  		state.status = 'error'
+	  		state.links = []
+	  	},
+	  	updateForm(state, form) {
+	  		state.form = form
+	  	},
 	  	create_request(state){
 	  		state.status = 'loading'
 	  	},
@@ -53,23 +74,14 @@ export default new Vuex.Store({
 	  	},
 	},
 	actions: {
-	  	login({commit}, user){
+	  	login({commit}, userData){
 	            commit('auth_request')
-	            axios({url: 'https://mpi.healthlink.network/api/auth/', 
-	            	data: user,
-	            	method: 'POST' })
+	            Auth.login(userData)
 	            .then(resp => {
 	                const token = resp.data
-	                console.log(user)
 	                localStorage.setItem('token', token)
-	                localStorage.setItem('user', user)
-
-	                // Add the following line:
-	                //axios.defaults.headers.common['Authorization'] = this.$store.state.token
-	                commit('auth_success', token, user)
-	                this.$http.defaults.headers.common['Authorization'] = 'Bearer ' + token
-					this.$http.defaults.headers.common['Access-Control-Allow-Origin'] = '*'
-				    this.$http.defaults.headers.common['Content-Type'] = 'Application/json'
+	                localStorage.setItem('user', userData)
+	                commit('auth_success', token, userData)
 	            })
 	            .catch(err => {
 	            	console.log('Error during login...' + err)
@@ -78,10 +90,7 @@ export default new Vuex.Store({
 	    },
 	  	query({commit}, token){
 	            commit('query_request')
-	            console.log(token)
-	            axios({url: 'https://mpi.healthlink.network/api/fhir', 
-	            	headers: { Authorization: "Bearer " + token },
-	            	method: 'GET' })
+	            Fhir.query(token)
 	            .then(resp => {
 	                const resources = resp.data
 	                console.log(resp.data)
@@ -94,25 +103,61 @@ export default new Vuex.Store({
 	                commit('auth_error')
 	            })
 	    },
-	  	create({commit}, token, formdata){
+	  	create({commit}, token, formData){
 	            commit('create_request')
-	            console.log('token: '  + token)
-	            const options = {
-				    headers: { Authorization: `Bearer ${token}`,
-				    		   'Content-Type': 'Application/json',
-				    		   'Access-Control-Allow-Origin': '*' }
-				};
-				//const payload = JSON.stringify(formdata);
-				console.log(payload)
-	            axios.post('https://mpi.healthlink.network/api/fhir', payload, options)
+	            Fhir.create(token, formData)
 	            .then(resp => {
 	                console.log(resp.data)
 	                console.log(resp.status)
-	                commit('create_success', resources)
+	                commit('create_success')
 	            })
 	            .catch(err => {
 	            	console.log(err)
 	                commit('create_error')
+	            })
+	    },
+	  	healthlink({commit}){
+	            commit('healthlink_request')
+	            // the example chain. TODO: make this progrmmable
+	            Chain.chainhead('f0a7447cc7c8ab136c4c253e224377ac108af790d55cd9a9dd372bf2a7a3e737')
+	            .then(chain => {
+	            	commit('healthlink_loading', chain)
+	                console.log('keymr: ' + chain.data.chainhead)
+	                const keymr = chain.data.chainhead;
+	                while  (keymr != null) {
+	                	// Note: let block scope
+	                	// retrieve entryblock
+	                	Chain.entry_block(keymr)
+	                	.then(block => {
+	                		console.log('block :' + block)
+							block.data.entrylist
+							.reverse()
+							.forEach( function(entryptr) {
+								// over each entryptr in entrylist
+								console.log('entryptr :' + entryptr.hash)
+								Chain.entry( entryptr.entryhash )
+								.then(link =>  {
+								commit('healthlink_update', link)
+								console.log('link: ' + link)
+							    }) //link promise
+							    .catch(err => {
+						          console.log(err)
+						          commit('healthlink_error')
+					            }) 
+							}) // forEach lambda
+	                	}) //block promise 
+	                	.catch(err => {
+	                		console.log(err)
+	                		commit('healthlink_error')
+	                	})
+
+
+	                }
+	                commit('healthlink_success')
+	            }) //chain promise
+	            .catch(err => {
+	            	console.log(err)
+	                commit('healthlink_error')
 	            })
 	    },
 	 	logout({commit}){
@@ -120,6 +165,7 @@ export default new Vuex.Store({
 		      	commit('logout')
 		      	localStorage.removeItem('token')
 		      	localStorage.removeItem('resources')
+		      	localStorage.removeItem('links')
 		      	delete axios.defaults.headers.common['Authorization']
 		      	resolve()
 		    })

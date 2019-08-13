@@ -26,6 +26,7 @@
           <template slot="button-content"><em>HL7</em></template>
           <b-dropdown-item v-on:click="create()">Create</b-dropdown-item>
           <b-dropdown-item v-on:click="transfer()">Transfer</b-dropdown-item>
+          <b-dropdown-item v-on:click="healthlink()">Link</b-dropdown-item>
           <b-dropdown-item v-on:click="logout()">Sign Out</b-dropdown-item>
         </b-nav-item-dropdown>
       </b-navbar-nav>
@@ -75,6 +76,7 @@
 	</header>
 </template>
 <script>
+
 	export default { 
 		data () { 
 			return { 
@@ -92,6 +94,14 @@
 		   		.then(() => this.$router.push('/dashboard'))
 		   		.catch(err => console.log(err))
 		   	},
+		   	link: function () {
+		   		console.log('hello')
+		   	},
+			healthlink: function () {
+				this.$store.dispatch('healthlink')
+				.then(() => this.link())
+				.catch(err => console.log(err))
+			},
 		   	transfer: function () {
 		   		this.$router.push('/transfer')
 		   	},
