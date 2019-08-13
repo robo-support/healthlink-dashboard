@@ -5,6 +5,6 @@ module.exports = {
 		disableHostCheck: true,
 		publicPath: '/',
 		// proxy: process.env.ROOT_API,
-        proxy: 'http://localhost:8088/',
+       /proxy: 'http://mpi.healthlink.network/',
     },
 }
