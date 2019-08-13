@@ -11,7 +11,7 @@
 
         <b-nav-item v-on:click="sync()" class="btn btn-sm btn-outline-success">Sync</b-nav-item>
 
-        <b-nav-item v-on:click="logout()" class="mx-1 btn btn-sm btn-outline-warning">Sign Out</b-nav-item>
+        <b-nav-item v-on:click="healthlink()" class="mx-1 btn btn-sm btn-outline-warning">Link</b-nav-item>
       </b-navbar-nav>
 
       <!-- Right aligned nav items -->
@@ -66,7 +66,7 @@
 				<ul class="navbar-nav">
 					<li class="nav-item">
 						<a class="nav-link" href="#">
-							<span v-on:click="logout()" class="btn btn-link">Logout</span>
+							<span v-on:click="healthlink()" class="btn btn-link">Link</span>
 						</a>
 					</li>
 				</ul>
@@ -95,7 +95,7 @@
 		   		.catch(err => console.log(err))
 		   	},
 		   	link: function () {
-		   		console.log('hello')
+		   		console.log('link sucessful...')
 		   	},
 			healthlink: function () {
 				this.$store.dispatch('healthlink')
