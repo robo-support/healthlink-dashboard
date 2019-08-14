@@ -9,7 +9,7 @@ export default {
 	        method: method,
 	        params: params
         };
-		return FactomService().post('/v2', method, params)
+		return FactomService().post('/factomd/', method, params)
 	},
 
 	chainhead ( chainId ) {
