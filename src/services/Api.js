@@ -8,7 +8,7 @@ export default() => {
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': process.env.VUE_APP_ROOT_API
+            //'Access-Control-Allow-Origin': process.env.VUE_APP_ROOT_API
         }
     })
 }
