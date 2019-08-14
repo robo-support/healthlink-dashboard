@@ -18,11 +18,11 @@ export default {
 
 	entry_block ( keymr ) {
 		// js object ltierals don't need their keys to be strings as in cPy
-		return rpc("entry-block", { keymr: keymr } )
+		return this.rpc("entry-block", { keymr: keymr } )
 	}, 
 
 	entry ( entryhash ) {
-		return rpc("entry", { hash: entryhash } )
+		return this.rpc("entry", { hash: entryhash } )
 	}
 	
 

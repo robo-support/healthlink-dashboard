@@ -4,6 +4,7 @@ import axios from 'axios'
 import Auth from '@/services/Auth'
 import Fhir from '@/services/Fhir'
 import Chain from '@/services/Chain'
+import Link from '@/services/Link'
 
 Vue.use(Vuex)
 
@@ -14,6 +15,7 @@ export default new Vuex.Store({
   		providerId: '',
   		keystoreId: '',
   		keyId: '',
+  		chain: '',
   		token: localStorage.getItem('token') || '',
   		resources : [],
   		links: [],
@@ -43,7 +45,7 @@ export default new Vuex.Store({
 	  		state.resources = []
 	  	},
 	    healthlink_request(state){
-	  		state.status = 'loading'
+	  		state.status = 'linking'
 	  	},
 	  	healthlink_update(state, link) {
 	  		state.links.push(link)
@@ -116,49 +118,79 @@ export default new Vuex.Store({
 	                commit('create_error')
 	            })
 	    },
-	  	healthlink({commit}){
+	  	async healthlink({commit}){
 	            commit('healthlink_request')
 	            // the example chain. TODO: make this progrmmable
-	            Chain.chainhead('f0a7447cc7c8ab136c4c253e224377ac108af790d55cd9a9dd372bf2a7a3e737')
-	            .then(chain => {
-	            	commit('healthlink_loading', chain)
-	                console.log('keymr: ' + chain.data.chainhead)
-	                const keymr = chain.data.chainhead;
-	                while  (keymr != null) {
-	                	// Note: let block scope
-	                	// retrieve entryblock
-	                	Chain.entry_block(keymr)
-	                	.then(block => {
-	                		console.log('block :' + block)
-							block.data.entrylist
-							.reverse()
-							.forEach( function(entryptr) {
-								// over each entryptr in entrylist
-								console.log('entryptr :' + entryptr.hash)
-								Chain.entry( entryptr.entryhash )
-								.then(link =>  {
-								commit('healthlink_update', link)
-								console.log('link: ' + link)
-							    }) //link promise
-							    .catch(err => {
-						          console.log(err)
-						          commit('healthlink_error')
-					            }) 
-							}) // forEach lambda
-	                	}) //block promise 
-	                	.catch(err => {
-	                		console.log(err)
-	                		commit('healthlink_error')
-	                	})
+	            let keymr = await Link.getChain();
+	            while (keymr != null) {
+	            	console.log('keymr: ' + keymr);
+	            	let block = await Link.getBlock(keymr); //return entrylist
+	            	let entrylist = block.entrylist.reverse();
+	            	console.log('entrylist: ' + entrylist);
+	            	// for ( const entryptr of entrylist ) {
+	            	// 	const entry = await Link.getEntry( entryptr.entryhash );
+	            	// 	console.log('entry: ' + entry.data.result);
+	            	// 	commit('healthlink_update', entry.data.result)
+	            	// }
+	            	await Promise.all(entrylist.map( async ( entryptr ) => {
+	            		const entry = await Link.getEntry( entryptr.entryhash );
+						console.log('entry: ' + entry.data.result);
+	            		commit('healthlink_update', entry.data.result)
+	            	}));
+
+	            	// entrylist.reverse().forEach( function ( entryptr, index, array ) {
+	            	// 	console.log('entryptr: ' + index + ' ' + entryptr);
+	            	// 	let entry = await Link.getEntry( entryptr.entryhash );
+	            	// 	console.log('entry: ' + entry.data.result);
+	            	// 	commit('healthlink_update', entry.data.result)
+
+	            	// });
+	            	//work backwards through the chain history
+	            	keymr = block.header.prevkeymr;
+
+	            }
+	     //        Chain.chainhead('f0a7447cc7c8ab136c4c253e224377ac108af790d55cd9a9dd372bf2a7a3e737')
+	     //        .then(chain => {
+	     //        	commit('healthlink_request')
+	     //            console.log('keymr: ' + chain.data.result.chainhead);
+	     //            let keymr = chain.data.result.chainhead;
+	     //            while  (keymr != null) {
+	     //            	// Note: let block scope
+	     //            	// retrieve entryblock
+	     //            	Chain.entry_block(keymr)
+	     //            	.then(block => {
+	     //            		console.log('entrylist :' + block.data.result.entrylist)
+						// 	block.data.result.entrylist
+						// 	.reverse()
+						// 	.forEach( function( entryptr ) {
+						// 		over each entryptr in entrylist
+						// 		console.log( 'entryptr :' + entryptr.hash )
+						// 		Chain.entry( entryptr.entryhash )
+						// 		.then(link =>  {
+						// 		console.log('link: ' + link.data.result)
+						// 		commit('healthlink_update', link.data.result)
+						// 		}) //link promise
+						// 		.catch(err => {
+						// 			console.log(err)
+						// 			commit('healthlink_error')
+						// 		}) 
+						// 	}) // forEach lambda
+						// 	keymr = block.header.prevkeymr
+						// }) //block promise 
+	     //            	.catch(err => {
+	     //            		console.log(err)
+	     //            		commit('healthlink_error')
+	     //            	})
 
 
-	                }
-	                commit('healthlink_success')
-	            }) //chain promise
-	            .catch(err => {
-	            	console.log(err)
-	                commit('healthlink_error')
-	            })
+
+	     //            }
+	     //            commit('healthlink_success')
+	     //        }) //chain promise
+	     //        .catch(err => {
+	     //        	console.log(err)
+	     //            commit('healthlink_error')
+	     //        })
 	    },
 	 	logout({commit}){
 		    return new Promise((resolve, reject) => {
