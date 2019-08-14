@@ -190,9 +190,7 @@ export default {
 	},
 	mounted: {
 		healthlink: function () {
-			this.$store.dispatch('healthlink')
-			.then(() => this.link())
-			.catch(err => console.log(err))
+			this.$store.dispatch('healthlink');
 		}
 	}
 };

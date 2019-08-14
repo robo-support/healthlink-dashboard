@@ -337,7 +337,6 @@
     },
     methods: {
       create: function() {
-
         Fhir.create(this.$store.state.token, this.form)
         .then(resp => {
             console.log(resp.data)
@@ -346,15 +345,7 @@
         })
         .catch(err => {
         	console.log(err)
-            commit('create_error')
         })
-        //const formData = _.cloneDeep(this.$store.state.form);
-        //this.$store.commit('updateForm', this.table)
-        //console.log(formData)
-    	//this.$store.dispatch('create', 
-    	//this.$store.state.token, formData)
-   		//.then(() => this.$router.push('/dashboard'))
-   		//.catch(err => console.log(err))
    	  },
 
       addName: function () {
