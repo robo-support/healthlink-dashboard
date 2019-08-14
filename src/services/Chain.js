@@ -3,13 +3,13 @@ import FactomService from '@/services/FactomService'
 export default {
 
 	rpc (method, params) {
-	    const data = {
+	    let data = {
 	        jsonrpc: '2.0',
-	        id: 1,
+	        id: 0,
 	        method: method,
 	        params: params
         };
-		return FactomService().post('/v2', method, params)
+		return FactomService().post('/v2', data)
 	},
 
 	chainhead ( chainId ) {
