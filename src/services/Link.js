@@ -11,12 +11,16 @@ export default {
 		return block.data.result;
 	},
 	async getEntry( entryHash ) {
-		return await Chain.entry( entryHash );
+		let entry =  await Chain.entry( entryHash );
+		return entry.data.result;
 	},
-	// from https://codeburst.io/javascript-async-await-with-foreach-b6ba62bbf404
-	async asyncForEach(array, callback) {
-		for (let index = 0; index < array.length; index++) {
-			await callback(array[index], index, array);
+	async decodeContent(content)
+	{
+		let hex  = content.toString();
+		let str = '';
+		for (let n = 0; n < hex.length; n += 2) {
+			str += String.fromCharCode(parseInt(hex.substr(n, 2), 16));
 		}
+		return str;
 	}
 }
