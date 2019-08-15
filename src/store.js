@@ -8,6 +8,8 @@ import Link from '@/services/Link'
 
 Vue.use(Vuex)
 
+const NULL_BLOCK = '0000000000000000000000000000000000000000000000000000000000000000'
+
 export default new Vuex.Store({
 	state: {
   		status: 'loggedIn',
@@ -18,6 +20,7 @@ export default new Vuex.Store({
   		chain: '',
   		token: localStorage.getItem('token') || '',
   		resources : [],
+  		entries: [],
   		links: [],
   		form: {}
 	},
@@ -47,13 +50,25 @@ export default new Vuex.Store({
 	    healthlink_request(state){
 	  		state.status = 'linking'
 	  	},
-	  	healthlink_update(state, link) {
-	  		state.links.push(link)
+	  	healthlink_update(state, entry) {
+	  		state.entries.push(entry)
 	  	},
 	  	healthlink_success(state){
 	  		state.status = 'success'
 	  	},
 	  	healthlink_error(state){
+	  		state.status = 'error'
+	  	},
+	    unblind_request(state){
+	  		state.status = 'unblinding'
+	  	},
+	  	unblind_update(state, links) {
+	  		state.links = links
+	  	},
+	    unblind_success(state){
+	  		state.status = 'success'
+	  	},
+	  	unblind_error(state){
 	  		state.status = 'error'
 	  		state.links = []
 	  	},
@@ -72,6 +87,8 @@ export default new Vuex.Store({
 	  	logout(state){
 	    	state.status = 'loggedOut'
 	    	state.resources = []
+	    	state.entries = []
+	    	state.links = []
 	    	state.token = ''
 	  	},
 	},
@@ -118,11 +135,11 @@ export default new Vuex.Store({
 	                commit('create_error')
 	            })
 	    },
-	  	async healthlink({commit, state}){
+	  	async healthlink({commit, state, dispatch}){
 	  		try {
 	            commit('healthlink_request')
 	            let keymr = await Link.getChain();
-	            while (keymr != null) {
+	            while (keymr != NULL_BLOCK) {
 	            	console.log('keymr: ' + keymr);
 	            	let block = await Link.getBlock(keymr); 
 	            	let entrylist = block.entrylist.reverse();
@@ -132,9 +149,9 @@ export default new Vuex.Store({
 	            		console.log(entry.content)
 	            		let content = await Link.decodeContent(entry.content);
 	            		let datetime = await Link.decodeContent(entry.extids);
-						console.log('content: ' + content.d1);
+						console.log('content: ' + content);
 						console.log('datetime: ' + datetime);
-	            		commit('healthlink_update', {content})
+	            		commit('healthlink_update', content)
 	            	}));
 	            	// step through hash chain
 	            	keymr = block.header.prevkeymr;
@@ -146,6 +163,24 @@ export default new Vuex.Store({
 	        }
 	        finally {
 	        	commit('healthlink_success');
+	        	// store these locally for reuse
+	        	localStorage.setItem('entries', state.entries)
+	        }
+	    },
+	  	async unblind({commit, state, dispatch}){
+	  		try {
+	            commit('unblind_request')
+	            await dispatch('healthlink'); // wait for healthlink to sync with chain
+	            let metadata = await Link.link(state.token, state.entries);
+	            commit('unblind_update', metadata)
+	            console.log('metadata: ' + metadata)
+	        }
+	        catch (err) {
+	        	console.log(err);
+	        	commit('unblind_error');
+	        }
+	        finally {
+	        	commit('unblind_success');
 	        	// store these locally for reuse
 	        	localStorage.setItem('links', state.links)
 	        }

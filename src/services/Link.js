@@ -1,4 +1,5 @@
 import Chain from '@/services/Chain'
+import Api from '@/services/Api'
 
 export default {
 
@@ -22,5 +23,11 @@ export default {
 			str += String.fromCharCode(parseInt(hex.substr(n, 2), 16));
 		}
 		return str;
-	}
+	},
+    async link (token, data) {
+        console.log('token' + token)
+        console.log('metaddata: ' + JSON.parse(data))
+    	return Api().post('/api/link', JSON.parse(data), { headers: { Authorization: `Bearer ${token}` } } )
+    }
+
 }

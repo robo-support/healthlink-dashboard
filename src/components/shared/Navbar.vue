@@ -80,7 +80,7 @@
 	export default { 
 		data () { 
 			return { 
-
+				count: 0
 			}
 		},
 		methods: {
@@ -98,8 +98,9 @@
 		   		console.log('link sucessful...')
 		   	},
 			healthlink: function () {
-				this.$store.dispatch('healthlink')
-				.then(() => this.link())
+			    this.popToast('Linking in Progress...!')
+				this.$store.dispatch('unblind')
+				.then(() => this.popToast('Link Complete!'))
 				.catch(err => console.log(err))
 			},
 		   	transfer: function () {
@@ -107,7 +108,41 @@
 		   	},
 		   	create: function () {
 		   		this.$router.push('/create')
-		   	}
+		   	},
+		   	popToast(msg) {
+		        // Use a shorter name for this.$createElement
+		        const h = this.$createElement
+		        // Increment the toast count
+		        this.count++
+		        // Create the message
+		        const vNodesMsg = h(
+		          'p',
+		          { class: ['text-center', 'mb-0'] },
+		          [
+		            h('b-spinner', { props: { type: 'grow', small: true } }),
+		            ' Flashy ',
+		            h('strong', {}, 'toast'),
+		            ` message #${this.count} `,
+		            h('b-spinner', { props: { type: 'grow', small: true } })
+		          ]
+		        )
+		        // Create the title
+		        const vNodesTitle = h(
+		          'div',
+		          { class: ['d-flex', 'flex-grow-1', 'align-items-baseline', 'mr-2'] },
+		          [
+		            h('strong', { class: 'mr-2' }, msg),
+		            h('small', { class: 'ml-auto text-italics' }, 'Just Now!')
+		          ]
+		        )
+		        // Pass the vNodes as an array for message and title
+		        this.$bvToast.toast([vNodesMsg], {
+		          title: [vNodesTitle],
+		          solid: true,
+		          variant: 'info'
+		        })
+		      }
+		    
 		}
 	}
 </script>

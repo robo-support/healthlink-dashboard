@@ -17,6 +17,9 @@
         		<!-- header slot -->
 				<h4 slot="header" class="mb-0">
 				{{resource.body.name[0].given.toString()+"\t "+resource.body.name[0].family.toString()}}
+				<div class="clearfix">
+				  <b-spinner class="float-right" label="Floated Right"></b-spinner>
+				</div>
 				<span class="badge badge-secondary pull-right">{{resource.body.gender}}</span>
 				</h4>
 
@@ -107,10 +110,48 @@
 
 
 				</b-card>
+
+
 			</div>
 
 
+
 		</div>
+			<!-- Dummy loading card -->
+
+			<div class="card" v-if="status==='linking'" >
+				<div>
+					<b-card 
+					border-variant="primary"
+	        		header-bg-variant="prmary"
+	        		header-text-variant="white"
+	        		header-tag="header"
+					footer-tag="footer"
+					body-tag="body"
+	        		class="mt-1">
+
+	        		<!-- header slot -->
+					<h4 slot="header" class="mb-0">
+					Linking additional resources...
+					<div class="clearfix">
+					  <b-spinner class="float-right" label="Floated Right"></b-spinner>
+					</div>
+					<span class="badge badge-secondary pull-right">Outdated...</span>
+					</h4>
+
+
+					<!-- card body -->
+					<b-card-body>
+
+
+
+
+					</b-card-body>
+
+
+					</b-card>
+				</div>
+			</div>
 		<content>
 				<div class="alert alert-info" role="alert" v-if="resources.length <= 0">
 					<h4 class="alert-heading">No Patient Information</h4>
@@ -139,7 +180,7 @@
 
 export default { 
 	name: 'results',
-	computed: mapState(['status', 'resources']),
+	computed: mapState(['status', 'resources', 'links']),
 	components: {
 	},
 	props: {
@@ -190,7 +231,9 @@ export default {
 	},
 	mounted: {
 		healthlink: function () {
-			this.$store.dispatch('healthlink');
+			this.$store.dispatch('unblind')
+			.then(() => console.log('link complete...'))
+			.catch(err => console.log(err))
 		}
 	}
 };

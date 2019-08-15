@@ -7,8 +7,6 @@ export default() => {
         withCredentials: false,
         headers: {
             'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            //'Access-Control-Allow-Origin': process.env.VUE_APP_FACTOM_API
-        }
+            'Content-Type': 'application/json'        }
     })
 }
