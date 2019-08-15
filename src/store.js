@@ -151,7 +151,7 @@ export default new Vuex.Store({
 	            		let datetime = await Link.decodeContent(entry.extids);
 						console.log('content: ' + content);
 						console.log('datetime: ' + datetime);
-	            		commit('healthlink_update', content)
+	            		commit('healthlink_update', {content})
 	            	}));
 	            	// step through hash chain
 	            	keymr = block.header.prevkeymr;
@@ -191,6 +191,7 @@ export default new Vuex.Store({
 		      	localStorage.removeItem('token')
 		      	localStorage.removeItem('resources')
 		      	localStorage.removeItem('links')
+		      	localStorage.removeItem('entries')
 		      	delete axios.defaults.headers.common['Authorization']
 		      	resolve()
 		    })
