@@ -143,15 +143,16 @@ export default new Vuex.Store({
 	            	console.log('keymr: ' + keymr);
 	            	let block = await Link.getBlock(keymr); 
 	            	let entrylist = block.entrylist.reverse();
-	            	console.log('entrylist: ' + entrylist);
+	            	console.log('entrylist: ' + JSON.stringify(entrylist));
 	            	await Promise.all(entrylist.map( async ( entryptr ) => {
 	            		const entry = await Link.getEntry( entryptr.entryhash );
-	            		console.log(entry.content)
+	            		console.log(JSON.stringify(entry))
 	            		let content = await Link.decodeContent(entry.content);
 	            		let datetime = await Link.decodeContent(entry.extids);
 						console.log('content: ' + content);
 						console.log('datetime: ' + datetime);
-	            		commit('healthlink_update', {content})
+						// push the entry into the list
+	            		commit('healthlink_update', content)
 	            	}));
 	            	// step through hash chain
 	            	keymr = block.header.prevkeymr;
@@ -173,7 +174,7 @@ export default new Vuex.Store({
 	            await dispatch('healthlink'); // wait for healthlink to sync with chain
 	            let metadata = await Link.link(state.token, state.entries);
 	            commit('unblind_update', metadata)
-	            console.log('metadata: ' + metadata)
+	            console.log('metadata: ' + JSON.stringify(state.links))
 	        }
 	        catch (err) {
 	        	console.log(err);

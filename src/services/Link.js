@@ -26,8 +26,9 @@ export default {
 	},
     async link (token, data) {
         console.log('token' + token)
-        console.log('metaddata: ' + data)
-    	return Api().post('/api/link', data, { headers: { Authorization: `Bearer ${token}` } } )
+        console.log('data: ' + typeof(data))
+    	let links = Api().post('/api/link', data, { headers: { Authorization: `Bearer ${token}` } } )
+    	return links.data
     }
 
 }
