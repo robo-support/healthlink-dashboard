@@ -1,6 +1,7 @@
 <template>
 
 	<div class="container">
+
 		<div class="card" v-for="(resource, index) in resources" :key="index">
 			<div>
 				<b-card 
@@ -17,9 +18,6 @@
         		<!-- header slot -->
 				<h4 slot="header" class="mb-0">
 				{{resource.body.name[0].given.toString()+"\t "+resource.body.name[0].family.toString()}}
-				<div class="clearfix">
-				  <b-spinner class="float-right" label="Floated Right"></b-spinner>
-				</div>
 				<span class="badge badge-secondary pull-right">{{resource.body.gender}}</span>
 				</h4>
 
@@ -36,7 +34,13 @@
 
 					</b-col>
 					<b-col v-if="'photo' in resource.body"  >
-						<img v-bind:src="'data:image/jpeg;base64,'+img" />
+						<!-- <img v-bind:src="'data:image/jpeg;base64,'+img" /> -->
+					<div v-if="links!=undefined" class="clearfix">					  
+
+						<sweetalert-icon v-if="link(resource, links)" class="float-right" icon="success"/>
+						<sweetalert-icon v-else-if="link(resource, links)" class="float-right" icon="error"/>
+						<sweetalert-icon v-else="link(resource, links)" class="float-right" icon="warning"/>
+					</div>
 
 					</b-col>
 					</b-row>
@@ -119,12 +123,12 @@
 		</div>
 			<!-- Dummy loading card -->
 
-			<div class="card" v-if="status==='linking'" >
+			<div class="card" v-if="status==='linking'">
 				<div>
 					<b-card 
 					border-variant="primary"
 	        		header-bg-variant="prmary"
-	        		header-text-variant="white"
+	        		header-text-variant="black"
 	        		header-tag="header"
 					footer-tag="footer"
 					body-tag="body"
@@ -134,9 +138,12 @@
 					<h4 slot="header" class="mb-0">
 					Linking additional resources...
 					<div class="clearfix">
-					  <b-spinner class="float-right" label="Floated Right"></b-spinner>
+					  <content>
+					  <sweetalert-icon class="float-right" icon="loading"/>
+					  </content>
 					</div>
-					<span class="badge badge-secondary pull-right">Outdated...</span>
+					Access Point:
+					<span class="badge badge-secondary pull-right">healthlink.network</span>
 					</h4>
 
 
@@ -174,15 +181,17 @@
 </template>
 <script>
 	import { mapState } from 'vuex';
+	import SweetalertIcon from 'vue-sweetalert-icons';
+	import Base from "./fhir/Base.vue";
+
 
 	resourceTypeEnum: [{type: String, enum: ['Patient', 'Condition','CapabilityStatement','StructureDefinition','OperationDefinition','CodeSystem','ValueSet','Consent','Practitioner','Person','Group','PractitionerRole','Substance','Device','DeviceMetric','Observation','Procedure','Bundle','DiagonsticReport','AllergyIntolerance','FamilyMemberHistory','OperationOutcome','Encounter','Location','GeneralError']}];
 
 
 export default { 
 	name: 'results',
-	computed: mapState(['status', 'resources', 'links']),
-	components: {
-	},
+	computed: mapState(['status', 'resources', 'links', 'entries']),
+    components: { SweetalertIcon, Base },
 	props: {
 	    resourceType: {
 	      type: String,
@@ -207,12 +216,15 @@ export default {
 	   		.then(() => this.$router.push('/dashboard'))
 	   		.catch(err => console.log(err))
 	   	},
-	   	link: function () {
-	   		console.log('linking complete... do something.....')
-	   		//this.$store.dispatch('healthlink')
-	   		//.then(() => //this.$router.push('/dashboard'))
-	   		//.catch(err => console.log(err))
-
+	   	link: function (resource, metadata) {
+	   		console.log(resource.hash)
+	   		console.log(JSON.stringify(metadata))
+	        if (resource.hash in metadata) {
+	        	return true;
+	        }
+	        else {
+	        	return false;
+	        }
 	   	},
 	   	decodeImage: function(source) {
 	   		var image = new Image();
@@ -230,11 +242,6 @@ export default {
 		}
 	},
 	mounted: {
-		healthlink: function () {
-			this.$store.dispatch('unblind')
-			.then(() => console.log('link complete...'))
-			.catch(err => console.log(err))
-		}
 	}
 };
 

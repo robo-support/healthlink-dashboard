@@ -20,8 +20,8 @@ export default new Vuex.Store({
   		chain: '',
   		token: localStorage.getItem('token') || '',
   		resources : [],
-  		entries: [],
-  		links: [],
+  		entries: new Set(),
+  		links: {},
   		form: {}
 	},
 	mutations: {
@@ -51,10 +51,10 @@ export default new Vuex.Store({
 	  		state.status = 'linking'
 	  	},
 	  	healthlink_update(state, entry) {
-	  		state.entries.push(entry)
+	  		state.entries.add(entry)
 	  	},
 	  	healthlink_success(state){
-	  		state.status = 'success'
+	  		state.status = 'linked'
 	  	},
 	  	healthlink_error(state){
 	  		state.status = 'error'
@@ -112,7 +112,7 @@ export default new Vuex.Store({
 	            Fhir.query(token)
 	            .then(resp => {
 	                const resources = resp.data
-	                console.log(resp.data)
+	                console.log(resp.data.hash)
 	                localStorage.setItem('resources', resources)
 	                commit('query_success', resources)
 	            })
@@ -153,7 +153,9 @@ export default new Vuex.Store({
 						console.log('datetime: ' + datetime);
 						// push the entry into the list
 	            		commit('healthlink_update', content)
-	            	}));
+	            	}))
+	            	.then(console.log('Retrieving next block...'))
+	            	.catch(err => console.log(err))
 	            	// step through hash chain
 	            	keymr = block.header.prevkeymr;
 	            }
@@ -169,22 +171,29 @@ export default new Vuex.Store({
 	        }
 	    },
 	  	async unblind({commit, state, dispatch}){
-	  		try {
-	            commit('unblind_request')
-	            await dispatch('healthlink'); // wait for healthlink to sync with chain
-	            let metadata = await Link.link(state.token, state.entries);
-	            commit('unblind_update', metadata)
-	            console.log('metadata: ' + JSON.stringify(state.links))
-	        }
-	        catch (err) {
-	        	console.log(err);
-	        	commit('unblind_error');
-	        }
-	        finally {
-	        	commit('unblind_success');
-	        	// store these locally for reuse
-	        	localStorage.setItem('links', state.links)
-	        }
+
+            await dispatch('healthlink'); // wait for healthlink to sync with chain
+            // link the set entries to their blockchain commitment
+            commit('unblind_request')
+            await (Link.link(state.token, state.entries)
+            	.then(metadata => {
+            		console.log('response: ' + JSON.stringify(metadata.data))
+            		commit('unblind_update', metadata.data)
+            			        	// store these locally for reuse
+        	        localStorage.setItem('links', state.links);
+        	        commit('unblind_success');
+
+            	})
+            	.catch(err => {
+            		console.log(err)
+            		commit('unblind_error')
+            	}));
+
+	    },
+	    async link({commit, state, dispatch}){
+			var CryptoJS = require("crypto-js");
+			console.log(CryptoJS.HmacSHA2(state.resources, "Key"));
+
 	    },
 	 	logout({commit}){
 		    return new Promise((resolve, reject) => {
@@ -202,6 +211,9 @@ export default new Vuex.Store({
 	  isLoggedIn: state => !!state.token,
 	  authStatus: state => state.status,
 	  getToken: state => state.token,
+	  getLink(item) {
+	  	return this.state.links;
+	  },
 	  selectedResource(state){
     	console.log('getting selected resource')
     	return state.resources

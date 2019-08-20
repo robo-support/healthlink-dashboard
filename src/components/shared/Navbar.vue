@@ -80,7 +80,6 @@
 	export default { 
 		data () { 
 			return { 
-				count: 0
 			}
 		},
 		methods: {
@@ -98,9 +97,12 @@
 		   		console.log('link sucessful...')
 		   	},
 			healthlink: function () {
-			    this.popToast('Linking in Progress...!')
+			    this.popToast('HealthLink Alert', 'Syncing with HealthLink Servers...')
 				this.$store.dispatch('unblind')
-				.then(() => this.popToast('Link Complete!'))
+				.then(() => {
+					this.popToast('HealthLink Alert', 'Link Complete!')
+					this.sync()
+				})
 				.catch(err => console.log(err))
 			},
 		   	transfer: function () {
@@ -109,20 +111,17 @@
 		   	create: function () {
 		   		this.$router.push('/create')
 		   	},
-		   	popToast(msg) {
+		   	popToast(title, msg) {
 		        // Use a shorter name for this.$createElement
 		        const h = this.$createElement
 		        // Increment the toast count
-		        this.count++
 		        // Create the message
 		        const vNodesMsg = h(
 		          'p',
 		          { class: ['text-center', 'mb-0'] },
 		          [
 		            h('b-spinner', { props: { type: 'grow', small: true } }),
-		            ' Flashy ',
-		            h('strong', {}, 'toast'),
-		            ` message #${this.count} `,
+		            h('strong', {}, msg),
 		            h('b-spinner', { props: { type: 'grow', small: true } })
 		          ]
 		        )
@@ -131,7 +130,7 @@
 		          'div',
 		          { class: ['d-flex', 'flex-grow-1', 'align-items-baseline', 'mr-2'] },
 		          [
-		            h('strong', { class: 'mr-2' }, msg),
+		            h('strong', { class: 'mr-2' }, title),
 		            h('small', { class: 'ml-auto text-italics' }, 'Just Now!')
 		          ]
 		        )
